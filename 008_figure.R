@@ -50,7 +50,7 @@ volcano_plot <- ggplot() +
 volcano_plot
 
 #
-pval_to_asterisk <- function(pval) {
+pval_to_asterisk_R <- function(pval) {
   if (pval > 0.05) {
     return(" ")
   } else if (pval <= 0.05 & pval > 0.01) {
@@ -64,9 +64,26 @@ pval_to_asterisk <- function(pval) {
   }
 }
 
+pval_to_asterisk_L <- function(pval) {
+  if (pval > 0.05) {
+    return(" ")
+  } else if (pval <= 0.05 & pval > 0.01) {
+    return("   *")
+  } else if (pval <= 0.01 & pval > 0.001) {
+    return("  **")
+  } else if (pval <= 0.001 & pval > 0.0001) {
+    return(" ***")
+  } else {
+    return("****")
+  }
+}
+
 # Add a new column with the asterisk notation for p-values in res_df
 res_df <- res_df %>%
-  mutate(pval_asterisk = sapply(padj, pval_to_asterisk))
+  mutate(pval_asterisk_L = sapply(padj, pval_to_asterisk_L))
+
+res_df <- res_df %>%
+  mutate(pval_asterisk_R = sapply(padj, pval_to_asterisk_R))
 
 #Create top 20 gene plots
 top_genes_up <- res_df %>% arrange(desc(log2FoldChange)) %>% head(20)
@@ -77,7 +94,7 @@ top20_genes <- rbind(top_genes_up, top_genes_down)
 increased_fc_plot <- ggplot(data = top_genes_up, aes(x = log2FoldChange, y = reorder(gene_name, log2FoldChange), fill = factor(ifelse(in_msigdb, "MSigDB", ifelse(SCN5A, "SCN5A", "Others"))))) +
   geom_col() +
   scale_fill_manual(values = c("Others" = "black", "MSigDB" = "blue", "SCN5A" = "red")) +
-  geom_text(data=top_genes_up, aes(x = log2FoldChange, y = reorder(gene_name, log2FoldChange), label = pval_asterisk, vjust = 0.8, hjust=1.3,size=10, color="white")) +
+  geom_text(data=top_genes_up, aes(x = log2FoldChange, y = reorder(gene_name, log2FoldChange), label = pval_asterisk_L, vjust = 0.8, hjust=1.3,size=10, color="white")) +
   labs(title = "Increased expression (Top 20)",
        x = "log2 fold change",
        y = "Gene name") +
@@ -90,7 +107,7 @@ increased_fc_plot <- ggplot(data = top_genes_up, aes(x = log2FoldChange, y = reo
 decreased_fc_plot <- ggplot(data = top_genes_down, aes(x = log2FoldChange, y = reorder(gene_name, log2FoldChange), fill = factor(ifelse(in_msigdb, "MSigDB", ifelse(SCN5A, "SCN5A", "Others"))))) +
   geom_col() +
   scale_fill_manual(values = c("Others" = "black", "MSigDB" = "blue", "SCN5A" = "red")) +
-  geom_text(data=top_genes_down, aes(x = log2FoldChange, y = reorder(gene_name, log2FoldChange), label = pval_asterisk, vjust = 0.8, hjust=-0.5,size=10, color="white")) +
+  geom_text(data=top_genes_down, aes(x = log2FoldChange, y = reorder(gene_name, log2FoldChange), label = pval_asterisk_R, vjust = 0.8, hjust=-0.5,size=10, color="white")) +
   labs(title = "Decreased expression (Top 20)",
        x = "log2 fold change",
        y = "Gene name") +
@@ -107,8 +124,8 @@ library(cowplot)
 # Combine the three plots using plot_grid() and label them A, B, and C
 combined_plot <- plot_grid(
   plot_grid(volcano_plot, NULL, ncol = 1, rel_heights = c(1, 0.05), labels = c("A", "")),
-  plot_grid(increased_fc_plot + theme(plot.title = element_text(hjust = 1.8)), 
-            decreased_fc_plot + theme(plot.title = element_text(hjust = 1.8)), ncol = 2, labels = c("B", "C")),
+  plot_grid(increased_fc_plot + theme(plot.title = element_text(hjust = -2.5)), 
+            decreased_fc_plot + theme(plot.title = element_text(hjust = -2.3)), ncol = 2, labels = c("B", "C")),
   ncol = 1, rel_heights = c(1, 1)
 )
 
@@ -127,7 +144,7 @@ plot_gsea(obj, bottomYtitle = "sh70c/ctrl", title = "SCHUETZ_BREAST_CANCER_DUCTA
 
 
 
-pdf("figures/008_FigA-C.pdf",width=8,heigh= 5)
+pdf("figures/008_FigA-C.pdf",width=8,heigh= 6)
 combined_plot
 dev.off()
 
