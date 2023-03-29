@@ -15,4 +15,4 @@ countMatrix<-as.data.frame(readRDS(file='processed_data/countMatrix.RDS')$counts
 countMatrix
 countMatrix$gene_name <- mapIds(org.Hs.eg.db, keys=row.names(countMatrix), column="SYMBOL", keytype="ENTREZID", multiVals="first")
 countMatrix$entrez_id <- row.names(countMatrix)
-write.csv(res_df, file="processed_data/009_CountMatrix.csv")
+write.csv(countMatrix, file="processed_data/009_CountMatrix.csv")
