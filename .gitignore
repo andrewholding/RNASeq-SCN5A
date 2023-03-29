@@ -1,15 +1,13 @@
-<<<<<<< Updated upstream
+./GEO
 ./figures/.DS_Store
 ./processed_data/.DS_Store
 ./Rhistory
 ./DS_Store
-=======
 ./RsubreadIndexHg.00.b.array
 ./RsubreadIndexHg.00.b.tab
 ./RsubreadIndexHg.files
 ./RsubreadIndexHg.log
 ./RsubreadIndexHg.reads
->>>>>>> Stashed changes
 ./rawdata
 ./rawdata/sh70c_2_2.fq.gz
 ./rawdata/sh70c_1_1.fq.gz
