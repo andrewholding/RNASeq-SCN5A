@@ -63,6 +63,8 @@ condPlot<-plotPCA(vsd, intgroup="condition")+
                               ggtitle("PCA of sample coloured by condition")+
                               guides(color=guide_legend(title="Condition"))
 
+condPlot <- condPlot + scale_color_discrete(labels=c('ctrl', 'shRNA SCN5a'))
+
 #GSEA SCHUETZ Ductal Down 
 library(vulcan)
 library(ZMIZ1) #from Andrew Holding's github
